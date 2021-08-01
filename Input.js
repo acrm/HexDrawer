@@ -6,7 +6,8 @@ class Input {
     mouseLeftButtonDown,
     mouseRightButtonDown,
     mouseWheel,
-    keyPressed
+    keyPressed,
+    fractLevel
   ) {
     this.time = time || 0;
     this.canvasSize = canvasSize || new Size();
@@ -15,5 +16,6 @@ class Input {
     this.mouseRightButtonDown = mouseRightButtonDown || false;
     this.mouseWheel = mouseWheel || 0;
     this.keyPressed = keyPressed || null;
+    this.fractLevel = fractLevel || 0;
   }
 }

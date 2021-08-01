@@ -20,6 +20,7 @@
     <script src="App.js"></script>
     <script src="HexCell.js"></script>
     <script src="Input.js"></script>
+    <script src="Scene.js"></script>
     <script src="Size.js"></script>
     <script src="utils.js"></script>
     <script src="Vec2.js"></script>
@@ -30,7 +31,9 @@
         const infoPanel = document.getElementById('info-panel');
 
         const app = new App(canvas, fractInput);
-        app.content = new HexCell();
+        const scene = new Scene();
+        scene.content = new HexCell();
+        app.content = scene;
         app.start();
       });
     </script>
@@ -38,7 +41,7 @@
   <body>
     <div id="app-container">
       <canvas id="canvas"></canvas>
-      <input type="number" min="0" id="fract-input" value="0">
+      <input type="number" min="0" id="fract-input" value="0" maxlength="1">
     </div>
   </body>
 </html>

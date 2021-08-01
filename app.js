@@ -1,5 +1,5 @@
 class App {
-  constructor(canvas) {
+  constructor(canvas, fractInput) {
     this.startTime = new Date();
     this.frames = 0;
     this.input = new Input();
@@ -39,6 +39,9 @@ class App {
     document.addEventListener('keyup', e => {
       this.input.keyPressed = null;
     });
+    fractInput.addEventListener('change', e => {
+      this.input.fractLevel = e.target.value;
+    });
     this.content = null;
   }
 
@@ -50,7 +53,8 @@ class App {
       `Mouse buttons: [${this.input.mouseLeftButtonDown ? 'L' : ' '}|${this.input.mouseWheel}|${this.input.mouseRightButtonDown ? 'R' : ' '}]`,
       `Key pressed: ${this.input.keyPressed || 'none'}`,
       `ElapsedTime: ${elapsedTime}s`,
-      `Frames: ${this.frames}, FPS: ${(this.frames/elapsedTime).toFixed(1)}`
+      `Frames: ${this.frames}, FPS: ${(this.frames/elapsedTime).toFixed(1)}`,
+      `Hex Cells: ${HexCell.__debug__cellsCount}`
     ];
     drawMultiline(this.context2D, lines.filter(line => !!line));
   };
