@@ -2,15 +2,43 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="app.js"></script>
+    <style type="text/css">
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+      #app-container {
+        width: 100vw;
+        height: 100vh;
+      }
+      #fract-input {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+      }
+    </style>
+    <script src="App.js"></script>
+    <script src="HexCell.js"></script>
+    <script src="Input.js"></script>
+    <script src="Size.js"></script>
+    <script src="utils.js"></script>
+    <script src="Vec2.js"></script>
     <script>
       window.addEventListener("load", () => {
-        const container = document.getElementById('app-container');
-        const app = new App(container);
+        const canvas = document.getElementById('canvas');
+        const fractInput = document.getElementById('fract-input');
+        const infoPanel = document.getElementById('info-panel');
+
+        const app = new App(canvas, fractInput);
+        app.content = new HexCell();
+        app.start();
       });
     </script>
   </head>
   <body>
-    <div id="app-container"></div>
+    <div id="app-container">
+      <canvas id="canvas"></canvas>
+      <input type="number" min="0" id="fract-input" value="0">
+    </div>
   </body>
 </html>
