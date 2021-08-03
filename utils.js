@@ -9,7 +9,7 @@ const drawMultiline = (context2D, lines) => {
     offset += spacing + fontSize;
     maxWidth = Math.max(maxWidth, context2D.measureText(line).width);
   });
-  context2D.fillStyle = '#cccccc';
+  context2D.fillStyle = '#aacccccc';
   context2D.fillRect(0, 0, 4*spacing + maxWidth, offset + 4*spacing);
 
   context2D.fillStyle = 'black';

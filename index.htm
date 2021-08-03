@@ -16,21 +16,32 @@
         top: 5px;
         right: 5px;
       }
+      #pointy-input-container {
+        position: absolute;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
+        top: 30px;
+        right: 5px;
+      }
     </style>
     <script src="App.js"></script>
     <script src="HexCell.js"></script>
     <script src="Input.js"></script>
     <script src="Scene.js"></script>
-    <script src="Size.js"></script>
     <script src="utils.js"></script>
     <script src="Vec2.js"></script>
     <script>
       window.addEventListener("load", () => {
         const canvas = document.getElementById('canvas');
         const fractInput = document.getElementById('fract-input');
+        const pointyInput = document.getElementById('pointy-input');
         const infoPanel = document.getElementById('info-panel');
 
-        const app = new App(canvas, fractInput);
+        const app = new App(
+          canvas,
+          fractInput,
+          pointyInput);
         const scene = new Scene();
         scene.content = new HexCell();
         app.content = scene;
@@ -42,6 +53,7 @@
     <div id="app-container">
       <canvas id="canvas"></canvas>
       <input type="number" min="0" id="fract-input" value="0" maxlength="1">
+      <label id="pointy-input-container">Pointy upward <input type="checkbox" id="pointy-input" checked></label>>
     </div>
   </body>
 </html>

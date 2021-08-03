@@ -1,29 +1,38 @@
 class Scene {
   constructor() {
-    this.cameraPosition = null;
+    this.origin = null;
+    this.cameraPosition = new Vec2();
     this.lastMousePosition = null;
     this.content = null;
+    this.zoom = 1;
   }
 
-  draw(context2D, input) {
-    if (this.cameraPosition === null) {
-      this.cameraPosition = input.canvasSize.toVec2().mul(0.5);
-    }
-
+  update(input) {
     if (input.mouseLeftButtonDown) {
       const change = input.mousePosition.sub(this.lastMousePosition || input.mousePosition);
       this.cameraPosition = this.cameraPosition.add(change);
     }
+    this.zoom = Math.pow(Math.sqrt(3), -input.mouseWheel);
+    this.origin = input.canvasSize
+      .mul(0.5)
+      .add(this.cameraPosition);
 
-    context2D.save();
-
-    const zoom = Math.pow(1.5, -input.mouseWheel);
-    context2D.scale(zoom, zoom);
-    context2D.translate(this.cameraPosition.x/zoom, this.cameraPosition.y/zoom);
-    this.content.draw(context2D, input);
-
-    context2D.restore();
+    const relativeInput = {
+      ...input,
+      mousePosition: input.mousePosition.sub(this.origin).mul(1/this.zoom)
+    };
+    this.content.update(relativeInput);
 
     this.lastMousePosition = input.mousePosition;
+  }
+
+  draw(context2D) {
+    context2D.save();
+
+    context2D.scale(this.zoom, this.zoom);
+    context2D.translate(this.origin.x / this.zoom, this.origin.y / this.zoom);
+    this.content.draw(context2D);
+
+    context2D.restore();
   }
 }
