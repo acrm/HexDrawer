@@ -1,16 +1,34 @@
 class Scene {
-  constructor() {
+  constructor(onHexSelected) {
     this.origin = null;
     this.cameraPosition = new Vec2();
     this.lastMousePosition = null;
     this.content = null;
     this.zoom = 1;
+    this.hexStorage = new HexStorage();
+    this.selectedCellIndex = null;
+    this.selectedHex = null;
+    this.onHexSelected = onHexSelected;
+    this.currentColor = '#000000';
+    this.fractLevel = 0;
+  }
+
+  setColor(color) {
+    if (this.selectedHex) {
+      this.selectedHex.color = color;
+    }
+    this.currentColor = color;
   }
 
   update(input) {
-    if (input.mouseLeftButtonDown) {
+    this.fractLevel = input.fractLevel;
+    const cachedSelectedCellIndex = this.selectedCellIndex;
+    if (input.mouseRightButtonDown) {
       const change = input.mousePosition.sub(this.lastMousePosition || input.mousePosition);
       this.cameraPosition = this.cameraPosition.add(change);
+    }
+    if (input.mouseLeftButtonDown) {
+      this.selectedCellIndex = null;
     }
     this.zoom = Math.pow(Math.sqrt(3), -input.mouseWheel);
     this.origin = input.canvasSize
@@ -19,9 +37,28 @@ class Scene {
 
     const relativeInput = {
       ...input,
+      setCellIndex: index => {
+        this.selectedCellIndex = index;
+      },
       mousePosition: input.mousePosition.sub(this.origin).mul(1/this.zoom)
     };
-    this.content.update(relativeInput);
+    this.content.update(relativeInput, this.hexStorage);
+
+    if (this.selectedCellIndex != cachedSelectedCellIndex) {
+      if (this.selectedCellIndex != null) {
+        this.hexStorage.get(this.selectedCellIndex);
+        let hex = this.hexStorage.get(this.selectedCellIndex);
+        if (!hex) {
+          hex = new Hex(this.selectedCellIndex, this.currentColor);
+          this.hexStorage.add(hex);
+        }
+        this.selectedHex = hex;
+      }
+      else {
+        this.selectedHex = null;
+      }
+      this.onHexSelected(this.selectedCellIndex, this.selectedHex);
+    }
 
     this.lastMousePosition = input.mousePosition;
   }
@@ -31,7 +68,10 @@ class Scene {
 
     context2D.scale(this.zoom, this.zoom);
     context2D.translate(this.origin.x / this.zoom, this.origin.y / this.zoom);
-    this.content.draw(context2D);
+
+    for (let level = 0; level <= this.fractLevel; level++) {
+      this.content.draw(context2D, level);
+    }
 
     context2D.restore();
   }

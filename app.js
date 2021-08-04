@@ -1,11 +1,16 @@
 class App {
-  constructor(canvas, fractInput, pointyInput) {
+  constructor(canvas, fractInput, pointyInput, indexInput, colorInput) {
     this.startTime = new Date();
     this.frames = 0;
     this.previousSecond = new Date();
     this.previousSecondFrames = 0;
     this.fps = 0;
     this.input = new Input();
+    this.input.fractLevel = parseInt(localStorage.getItem('fractLevel') || 0);
+    fractInput.value = this.input.fractLevel;
+    this.input.pointyUpward = localStorage.getItem('pointyUpward') === 'true';
+    pointyInput.checked = this.input.pointyUpward;
+
     const updateSize = () => {
       canvas.width = document.body.clientWidth;
       canvas.height = document.body.clientHeight;
@@ -44,11 +49,27 @@ class App {
     });
     fractInput.addEventListener('change', e => {
       this.input.fractLevel = parseInt(e.target.value);
+      localStorage.setItem('fractLevel', this.input.fractLevel);
     });
     pointyInput.addEventListener('change', e => {
       this.input.pointyUpward = e.target.checked;
+      localStorage.setItem('pointyUpward', this.input.pointyUpward);
     });
-    this.content = null;
+    colorInput.addEventListener('change', e => {
+      this.input.color = e.target.value;
+      this.content.setColor(this.input.color);
+    });
+
+    const onHexSelected = (index, hex) => {
+      indexInput.value = index || '';
+      indexInput.dispatchEvent(new Event('change'));
+      if (hex) {
+        colorInput.value = hex.color;
+      }
+    };
+    const scene = new Scene(onHexSelected);
+    scene.content = new HexCell();
+    this.content = scene;
   }
 
   drawDebug() {

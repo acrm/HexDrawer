@@ -18,9 +18,11 @@ class HexCell {
     this.angleShift = (this.fractLevel % 2 === 0) ^ this.pointyUpward ? 0 : Math.PI / 6;
     this.name = (parent && parent.name + this.subIndex) || 'A';
     this.children = [];
+    this.hexData = null;
   }
 
-  update(input) {
+  update(input, hexStorage) {
+    this.hexData = hexStorage.get(this.name);
     if (this.pointyUpward !== input.pointyUpward) {
       this.pointyUpward = input.pointyUpward;
       this.angleShift = (this.fractLevel % 2 === 0) ^ this.pointyUpward ? 0 : Math.PI / 6;
@@ -29,9 +31,12 @@ class HexCell {
     this.checkFractalization(input.fractLevel);
     this.hover = input.fractLevel === this.fractLevel
       && input.mousePosition.sub(this.position).length() <= this.radius * this.scale;
+    if (this.hover && input.mouseLeftButtonDown) {
+      input.setCellIndex(this.name);
+    }
 
     for (let i = 0; i < this.children.length; i++) {
-      this.children[i].update(input);
+      this.children[i].update(input, hexStorage);
     }
   }
 
@@ -62,33 +67,41 @@ class HexCell {
     this.children = [];
   }
 
-  draw(context2D) {
-    context2D.save();
-    context2D.scale(this.scale, this.scale);
-    context2D.translate(this.position.x / this.scale, this.position.y / this.scale);
-
-    context2D.beginPath();
-    for (let i = 0; i < 6; i++) {
-      const x = Math.cos(Math.PI * 2 / 6 * i + this.angleShift) * this.radius;
-      const y = Math.sin(Math.PI * 2 / 6 * i + this.angleShift) * this.radius;
-      if (i == 0) context2D.moveTo(x, y);
-      else context2D.lineTo(x, y);
+  draw(context2D, level) {
+    if (this.fractLevel == level) {
+      context2D.save();
+      context2D.scale(this.scale, this.scale);
+      context2D.translate(this.position.x / this.scale, this.position.y / this.scale);
+  
+      context2D.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const x = Math.cos(Math.PI * 2 / 6 * i + this.angleShift) * this.radius;
+        const y = Math.sin(Math.PI * 2 / 6 * i + this.angleShift) * this.radius;
+        if (i == 0) context2D.moveTo(x, y);
+        else context2D.lineTo(x, y);
+      }
+      context2D.closePath();
+      context2D.stroke();
+      if (this.hexData) {
+        context2D.fillStyle = this.hexData.color;
+        context2D.fill();
+      }
+      if (this.hover) {
+        context2D.fillStyle = '#002211';
+        context2D.fill();
+      }
+  
+      if (this.children.length === 0) {
+        this.drawName(context2D);
+      }
+  
+      context2D.restore();
     }
-    context2D.closePath();
-    context2D.stroke();
-    if (this.hover) {
-      context2D.fillStyle = '#002211';
-      context2D.fill();
-    }
 
-    if (this.children.length === 0) {
-      this.drawName(context2D);
-    }
-
-    context2D.restore();
-
-    for (let i = 0; i < this.children.length; i++) {
-      this.children[i].draw(context2D);
+    if (level > this.fractLevel) {
+      for (let i = 0; i < this.children.length; i++) {
+        this.children[i].draw(context2D, level);
+      }
     }
   }
 

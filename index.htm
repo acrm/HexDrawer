@@ -6,27 +6,47 @@
       body {
         margin: 0px;
         padding: 0px;
+        color: white;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 14px;
       }
       #app-container {
         width: 100vw;
         height: 100vh;
       }
-      #fract-input {
+      #panel {
         position: absolute;
         top: 5px;
         right: 5px;
+        display: flex;
+        flex-direction: column;
       }
-      #pointy-input-container {
-        position: absolute;
-        color: white;
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 14px;
-        top: 30px;
-        right: 5px;
+      #fract-input {
+        width: 50px;
+      }
+      #cell-info {
+        border-radius: 10px;
+        padding: 5px;
+        display: flex;
+        flex-direction: column;
+        background-color: #0075ff;
+        color: black;
+      }
+      #cell-info h3 {
+        margin: 0px 0px 0px 35px;
+        align-items: center;
+      }
+      #cell-index {
+        width: 70px;
+      }
+      .hidden {
+        display: none !important;
       }
     </style>
     <script src="App.js"></script>
+    <script src="Hex.js"></script>
     <script src="HexCell.js"></script>
+    <script src="HexStorage.js"></script>
     <script src="Input.js"></script>
     <script src="Scene.js"></script>
     <script src="utils.js"></script>
@@ -36,15 +56,20 @@
         const canvas = document.getElementById('canvas');
         const fractInput = document.getElementById('fract-input');
         const pointyInput = document.getElementById('pointy-input');
-        const infoPanel = document.getElementById('info-panel');
+        const cellInfo = document.getElementById('cell-info');
+        const indexInput = document.getElementById('cell-index');
+        const colorInput = document.getElementById('cell-color');
+        indexInput.addEventListener('change', e => {
+          if (e.target.value == '') cellInfo.classList.add('hidden');
+          else cellInfo.classList.remove('hidden');
+        });
 
         const app = new App(
           canvas,
           fractInput,
-          pointyInput);
-        const scene = new Scene();
-        scene.content = new HexCell();
-        app.content = scene;
+          pointyInput,
+          indexInput,
+          colorInput);
         app.start();
       });
     </script>
@@ -52,8 +77,15 @@
   <body>
     <div id="app-container">
       <canvas id="canvas"></canvas>
-      <input type="number" min="0" id="fract-input" value="0" maxlength="1">
-      <label id="pointy-input-container">Pointy upward <input type="checkbox" id="pointy-input" checked></label>>
+      <div id="panel">
+        <label>Fractalization level <input type="number" min="0" id="fract-input" value="0" maxlength="1"></label>
+        <label>Pointy upward <input type="checkbox" id="pointy-input" checked></label>
+        <div id="cell-info" class="hidden">
+          <h3>Cell info</h3>
+          <label>Index <input type="text" readonly id="cell-index"></label>
+          <label>Color <input type="color" id="cell-color"></label>
+        </div>
+      </div>
     </div>
   </body>
 </html>
