@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -43,36 +42,6 @@
         display: none !important;
       }
     </style>
-    <script src="App.js"></script>
-    <script src="Hex.js"></script>
-    <script src="HexCell.js"></script>
-    <script src="HexStorage.js"></script>
-    <script src="Input.js"></script>
-    <script src="Scene.js"></script>
-    <script src="utils.js"></script>
-    <script src="Vec2.js"></script>
-    <script>
-      window.addEventListener("load", () => {
-        const canvas = document.getElementById('canvas');
-        const fractInput = document.getElementById('fract-input');
-        const pointyInput = document.getElementById('pointy-input');
-        const cellInfo = document.getElementById('cell-info');
-        const indexInput = document.getElementById('cell-index');
-        const colorInput = document.getElementById('cell-color');
-        indexInput.addEventListener('change', e => {
-          if (e.target.value == '') cellInfo.classList.add('hidden');
-          else cellInfo.classList.remove('hidden');
-        });
-
-        const app = new App(
-          canvas,
-          fractInput,
-          pointyInput,
-          indexInput,
-          colorInput);
-        app.start();
-      });
-    </script>
   </head>
   <body>
     <div id="app-container">
@@ -87,5 +56,19 @@
         </div>
       </div>
     </div>
+
+    <script src="CanvasRenderer.js"></script>
+    <script src="EventSourceBase.js"></script>
+    <script src="Hex.js"></script>
+    <script src="HexGrid.js"></script>
+    <script src="HexCell.js"></script>
+    <script src="HexStorage.js"></script>
+    <script src="Input.js"></script>
+    <script src="UIController.js"></script>
+    <script src="Vec2.js"></script>
+    <script>
+      const hexGrid = new HexGrid();
+      const controller = new UIController(hexGrid);
+    </script>
   </body>
 </html>
